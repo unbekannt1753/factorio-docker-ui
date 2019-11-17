@@ -17,7 +17,9 @@ ENV PORT=34197 \
     SCENARIOS=/factorio/scenarios \
     SCRIPTOUTPUT=/factorio/script-output \
     PUID="$PUID" \
-    PGID="$PGID"
+    PGID="$PGID" \
+    MANAGER_VERSION=0.8.1 \
+    ADMIN_PASSWORD=factorio
 
 RUN set -ox pipefail \
     && archive="/tmp/factorio_headless_x64_$VERSION.tar.xz" \
@@ -36,10 +38,19 @@ RUN set -ox pipefail \
     && addgroup -g "$PGID" -S "$GROUP" \
     && adduser -u "$PUID" -G "$GROUP" -s /bin/sh -SDH "$USER" \
     && chown -R "$USER":"$GROUP" /opt/factorio /factorio
+RUN apk add --no-cache curl tar unzip nginx openssl xz
+WORKDIR /opt/
+RUN curl -s -L -S -k https://github.com/mroote/factorio-server-manager/releases/download/$MANAGER_VERSION/factorio-server-manager-linux.zip --cacert /opt/github.pem -o /tmp/factorio-server-manager-linux_$MANAGER_VERSION.zip && \
+    unzip -qq /tmp/factorio-server-manager-linux_$MANAGER_VERSION.zip && \
+    rm /tmp/factorio-server-manager-linux_$MANAGER_VERSION.zip && \
+    mkdir -p /run/nginx && \
+    chown nginx:root /var/lib/nginx
+COPY "init.sh" "/opt/init.sh"
+COPY "nginx.conf" "/etc/nginx/nginx.conf"
 
 VOLUME /factorio
 
-EXPOSE $PORT/udp $RCON_PORT/tcp
+EXPOSE $PORT/udp $RCON_PORT/tcp 80/tcp 443/tcp
 
 COPY files/ /
 
