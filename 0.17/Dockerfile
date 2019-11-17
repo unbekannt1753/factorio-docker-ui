@@ -15,6 +15,7 @@ ENV PORT=34197 \
     CONFIG=/factorio/config \
     MODS=/factorio/mods \
     SCENARIOS=/factorio/scenarios \
+    DATA=/factorio
     SCRIPTOUTPUT=/factorio/script-output \
     PUID="$PUID" \
     PGID="$PGID" \
@@ -35,6 +36,7 @@ RUN set -ox pipefail \
     && ln -s "$MODS" /opt/factorio/mods \
     && ln -s "$SCENARIOS" /opt/factorio/scenarios \
     && ln -s "$SCRIPTOUTPUT" /opt/factorio/script-output \
+    && ln -s "$DATA" /opt/factorio \
     && addgroup -g "$PGID" -S "$GROUP" \
     && adduser -u "$PUID" -G "$GROUP" -s /bin/sh -SDH "$USER" \
     && chown -R "$USER":"$GROUP" /opt/factorio /factorio
