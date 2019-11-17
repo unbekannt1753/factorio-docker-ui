@@ -38,7 +38,7 @@ RUN set -ox pipefail \
     && ln -s "$SCENARIOS" /opt/factorio/scenarios \
     && ln -s "$SCRIPTOUTPUT" /opt/factorio/script-output \
     && ln -s "$DATA" /opt/factorio \
-    && ln -s "$MANAGER" /opt/factorio-server-manager \
+    && ln -s /opt/factorio-server-manager "$MANAGER"  \
     && addgroup -g "$PGID" -S "$GROUP" \
     && adduser -u "$PUID" -G "$GROUP" -s /bin/sh -SDH "$USER" \
     && chown -R "$USER":"$GROUP" /opt/factorio /factorio
