@@ -14,7 +14,7 @@ fi
 cd "$VERSION_SHORT" || exit 1
 
 VERSION=$(grep -oP '[0-9]+\.[0-9]+\.[0-9]+' Dockerfile | head -1)
-DOCKER_REPO=factoriotools/factorio
+DOCKER_REPO=dieunbekannt/factorio-docker-ui
 
 if [[ ${TRAVIS_PULL_REQUEST:-} == true ]]; then
   TAGS="$DOCKER_REPO:$TRAVIS_PULL_REQUEST_SLUG"
