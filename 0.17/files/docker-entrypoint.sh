@@ -8,6 +8,7 @@ mkdir -p "$CONFIG"
 mkdir -p "$MODS"
 mkdir -p "$SCENARIOS"
 mkdir -p "$SCRIPTOUTPUT"
+mkdir -p /security
 
 if [[ ! -f $CONFIG/rconpw ]]; then
   # Generate a new RCON password if none exists
@@ -57,6 +58,24 @@ if [[ $NRSAVES -eq 0 ]]; then
     --map-gen-settings "$CONFIG/map-gen-settings.json" \
     --map-settings "$CONFIG/map-settings.json"
 fi
+
+# Run NGinx
+if [ ! -f /security/server.key ]; then
+	echo "No SSL key found. generating new key and certificate"
+	openssl req \
+		-new \
+		-newkey rsa:2048 \
+		-days 365 \
+		-nodes\
+		-x509 \
+		-subj "/CN=localhost" \
+		-keyout /security/server.key \
+		-out /security/server.crt
+fi
+
+nohup nginx &
+cd /opt/factorio-server-manager
+./factorio-server-manager -dir '/opt/factorio'
 
 # shellcheck disable=SC2086
 exec $SU_EXEC /opt/factorio/bin/x64/factorio \
